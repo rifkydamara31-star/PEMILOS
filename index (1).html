@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemilos SMAN 1 Sleman 2026</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        .animate-bounce-in {
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .animation-fade-in {
+            animation: fadeIn 0.4s ease-in;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .progress-bar-animate {
+            animation: progress 3s ease-in-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100 flex flex-col font-sans">
+
+    <!-- HEADER -->
+    <header class="bg-white shadow-md py-4 px-6 mb-8 rounded-b-xl border-t-4 border-orange-600">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <!-- Ganti atribut src di bawah ini dengan URL atau path logo SMAN 1 Sleman Anda -->
+                <img src="logo-sman1.png" alt="Logo SMAN 1 Sleman" class="w-12 h-12 md:w-14 md:h-14 object-contain rounded-full">
+                
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-gray-800">SMA Negeri 1 Sleman</h1>
+                    <p class="text-sm text-gray-500 font-medium tracking-wide">Aplikasi Pemilos Tahun 2026</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col items-center md:items-end bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
+                <div id="clock-time" class="text-2xl font-mono font-bold text-orange-700 tracking-wider">00:00:00</div>
+                <div id="clock-date" class="text-xs text-gray-500 font-medium">Memuat tanggal...</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4">
+        
+        <!-- VIEW 1: HALAMAN LOGIN -->
+        <div id="view-login" class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden animation-fade-in">
+            <div id="login-header" class="p-6 text-center transition-colors bg-orange-600">
+                <h2 class="text-2xl font-bold text-white mb-1">Selamat Datang</h2>
+                <p id="login-subtitle" class="text-white text-opacity-90 text-sm">Silakan masuk untuk memberikan suara Anda</p>
+            </div>
+            
+            <form id="login-form" class="p-8">
+                <!-- Peringatan Waktu Ditutup -->
+                <div id="time-warning" class="hidden mb-6 bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg text-sm text-center font-medium">
+                    Waktu pemilihan hanya dibuka pada pukul <br/><span class="text-lg font-bold">00:00 - 23:59</span>
+                </div>
+
+                <!-- Peringatan Error -->
+                <div id="login-error" class="hidden mb-4 bg-red-50 text-red-600 p-3 rounded-lg flex items-start gap-2 text-sm text-left">
+                    <i class="fa-solid fa-circle-exclamation mt-0.5 flex-shrink-0"></i>
+                    <span id="login-error-text">Pesan error</span>
+                </div>
+                
+                <div class="mb-5">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
+                    <input id="username" type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all" placeholder="Masukkan username" required>
+                </div>
+                
+                <div class="mb-8">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
+                    <input id="password" type="password" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all" placeholder="Masukkan password" required>
+                </div>
+                
+                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all transform hover:-translate-y-0.5">
+                    MASUK SEKARANG
+                </button>
+            </form>
+        </div>
+
+        <!-- VIEW 2: HALAMAN PEMILIHAN -->
+        <div id="view-voting" class="hidden w-full max-w-6xl mx-auto animation-fade-in">
+            <div class="flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-xl shadow-sm mb-8 border border-gray-100">
+                <div class="flex items-center gap-4 mb-4 md:mb-0">
+                    <div class="bg-orange-100 p-3 rounded-full text-orange-600 flex items-center justify-center">
+                        <i class="fa-solid fa-circle-user text-2xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Pemilih Aktif:</p>
+                        <h3 id="voter-name" class="text-xl font-bold text-gray-800">Nama Siswa</h3>
+                        <p id="voter-class" class="font-medium text-orange-600">Kelas</p>
+                    </div>
+                </div>
+                <button onclick="handleLogout()" class="flex items-center gap-2 text-gray-500 hover:text-red-600 transition-colors px-4 py-2 rounded-lg hover:bg-red-50">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span class="font-medium">Keluar</span>
+                </button>
+            </div>
+
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-3">Pilih Kandidat Ketua OSIS</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Klik pada foto atau tombol pilih pada kandidat pilihan Anda. Gunakan hak suara Anda dengan bijak, satu suara menentukan masa depan sekolah.</p>
+            </div>
+
+            <!-- Container Kandidat yang akan diisi oleh JS -->
+            <div id="candidates-container" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+        </div>
+
+        <!-- VIEW 3: HALAMAN ADMIN (SPREADSHEET) -->
+        <div id="view-admin" class="hidden w-full max-w-6xl mx-auto animation-fade-in bg-white rounded-xl shadow-lg p-6">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-orange-100 w-12 h-12 flex items-center justify-center rounded-xl text-orange-700">
+                        <i class="fa-solid fa-database text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">Data Pemilih (Spreadsheet)</h2>
+                        <p class="text-gray-500 text-sm">Rekapitulasi waktu real-time</p>
+                    </div>
+                </div>
+                <button onclick="handleLogout()" class="flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg font-medium transition-colors">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-700">
+                            <th class="p-4 rounded-tl-lg font-semibold">Waktu Memilih</th>
+                            <th class="p-4 font-semibold">Nama Pemilih</th>
+                            <th class="p-4 font-semibold">Kelas</th>
+                            <th class="p-4 rounded-tr-lg font-semibold">Kandidat Dipilih</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body">
+                        <!-- Data Tabel akan diisi oleh JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4 flex justify-between items-center text-sm text-gray-500">
+                <p>Total Suara Masuk: <span id="total-votes" class="font-bold text-orange-600">0</span></p>
+                <button onclick="resetData()" class="text-red-500 hover:text-red-700 underline">
+                    Reset Data (Untuk Testing)
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL 1: SUKSES LOGIN -->
+    <div id="modal-login" class="hidden fixed inset-0 bg-orange-900 bg-opacity-80 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform scale-100 animate-bounce-in">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5 text-green-500">
+                <i class="fa-solid fa-circle-check text-5xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Anda berhasil login!</h2>
+            <div class="bg-gray-50 rounded-xl p-4 mt-4 border border-gray-100">
+                <p class="text-gray-500 text-sm mb-1">Selamat Datang,</p>
+                <p id="modal-voter-name" class="text-lg font-bold text-orange-700">Nama</p>
+                <p id="modal-voter-class" class="font-semibold text-gray-600">Kelas</p>
+            </div>
+            <p class="text-xs text-gray-400 mt-6 animate-pulse">Mempersiapkan surat suara...</p>
+        </div>
+    </div>
+
+    <!-- MODAL 2: SUKSES MEMILIH -->
+    <div id="modal-vote" class="hidden fixed inset-0 bg-orange-900 bg-opacity-90 flex items-center justify-center z-50 p-4 backdrop-blur-md">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform scale-100">
+            <div class="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-5 text-orange-600">
+                <i class="fa-solid fa-circle-check text-6xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Anda berhasil melakukan pemilihan!</h2>
+            <p class="text-gray-600 mb-6">Terima kasih atas partisipasi Anda dalam Pemilos SMA Negeri 1 Sleman Tahun 2026.</p>
+            
+            <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                <div id="progress-bar" class="bg-orange-600 h-full"></div>
+            </div>
+            <p class="text-xs text-gray-400 mt-4">Sistem akan kembali ke halaman awal otomatis...</p>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="py-6 text-center text-gray-400 text-sm bg-white border-t border-gray-200 mt-auto">
+        &copy; 2026 Panitia Pemilos SMA Negeri 1 Sleman. All rights reserved.
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA SIMULASI ---
+        const MOCK_USERS = [
+            {username: "13851", password: "12345", name: "ADINDA DZAKIA WIBOWO", kelas: "10-A"},
+{username: "13852", password: "12345", name: "AGUSTINA MEYLANI PUTRI", kelas: "10-A"},
+{username: "13853", password: "12345", name: "AIRA INDAH PUSPITA EFFENDY", kelas: "10-A"},
+{username: "13854", password: "12345", name: "ALIFA MUFIDA", kelas: "10-A"},
+{username: "13855", password: "12345", name: "ALVINO HEIDY HANIAN", kelas: "10-A"},
+{username: "13856", password: "12345", name: "ANGGITA AMRANANI", kelas: "10-A"},
+{username: "13857", password: "12345", name: "ANTONIUS DWI BAGUS WICAKSANA", kelas: "10-A"},
+{username: "13858", password: "12345", name: "AUDREYY ANDHAREVA MAVIE", kelas: "10-A"},
+{username: "13860", password: "12345", name: "AURELLIA LUSIANA NURJANNAH", kelas: "10-A"},
+{username: "13861", password: "12345", name: "AYDINA FATHI KHALISA", kelas: "10-A"},
+{username: "13862", password: "12345", name: "BRIGITTA RACLEIFFINA IRWANTO", kelas: "10-A"},
+{username: "13863", password: "12345", name: "CLARA ELANY BUDYASTAMI", kelas: "10-A"},
+{username: "13864", password: "12345", name: "DANIEL VIDION REANDA", kelas: "10-A"},
+{username: "13865", password: "12345", name: "DEVIONA AYUTIRTA PRABOWO", kelas: "10-A"},
+{username: "13866", password: "12345", name: "FARIDA KURNIAWATI", kelas: "10-A"},
+{username: "13867", password: "12345", name: "FRANSISCO BENEDICTO RADITYA GADAFILIA A", kelas: "10-A"},
+{username: "13868", password: "12345", name: "GERARDA DEA RUSPASARI", kelas: "10-A"},
+{username: "13869", password: "12345", name: "Hanif Nur Rahmawati", kelas: "10-A"},
+{username: "13870", password: "12345", name: "HUMAIRA DIANDRA AYU PRASETYO", kelas: "10-A"},
+{username: "13871", password: "12345", name: "JUAN DELANO WIDYADANA", kelas: "10-A"},
+{username: "13872", password: "12345", name: "KHAIRANI AL PALIMBANI", kelas: "10-A"},
+{username: "13873", password: "12345", name: "MARIA ALICIA KANAYA PUTRI", kelas: "10-A"},
+{username: "13874", password: "12345", name: "MEYSEILA SIFAUNNAFISA", kelas: "10-A"},
+{username: "13875", password: "12345", name: "MUHAMMAD AHNAF FATHAN MUBINA", kelas: "10-A"},
+{username: "13876", password: "12345", name: "NADILA PUTRI ARIYANI", kelas: "10-A"},
+{username: "13877", password: "12345", name: "NADINDRA KIRANA PUTRI", kelas: "10-A"},
+{username: "13878", password: "12345", name: "NAYLA SEKAR LARASATI", kelas: "10-A"},
+{username: "13879", password: "12345", name: "RAAHEEL KHALIZA PUTRI", kelas: "10-A"},
+{username: "13880", password: "12345", name: "RADHII PAMBUDI", kelas: "10-A"},
+{username: "13881", password: "12345", name: "SALWA LAISYA RAIHAANUN", kelas: "10-A"},
+{username: "13882", password: "12345", name: "SHAFIRA DWI RIANI", kelas: "10-A"},
+{username: "13883", password: "12345", name: "THEOPHILA ANGGUN MITAYANI", kelas: "10-A"},
+{username: "13884", password: "12345", name: "VIKA SYAIRA HERAWATI", kelas: "10-A"},
+{username: "13885", password: "12345", name: "YULIANUS DHANI KURNIAWAN", kelas: "10-A"},
+{username: "13886", password: "12345", name: "YUSUF FAJAR PRATAMA", kelas: "10-A"},
+{username: "13887", password: "12345", name: "ZIDAN WIDYANT PRASETYO", kelas: "10-A"},
+{username: "13888", password: "12345", name: "ADHWA 'AQILLAH NOERHARDIYANI", kelas: "10-B"},
+{username: "13889", password: "12345", name: "ADVENTIA OLINE YESLIN CADISA", kelas: "10-B"},
+{username: "13890", password: "12345", name: "AISYAH DINI ALMASEVI", kelas: "10-B"},
+{username: "13891", password: "12345", name: "AMALIA DWI NURAINI", kelas: "10-B"},
+{username: "13892", password: "12345", name: "ANDINKA ARLITA PUTRI", kelas: "10-B"},
+{username: "13893", password: "12345", name: "ANGGITA ZOYA NURSYAFA", kelas: "10-B"},
+{username: "13894", password: "12345", name: "AQILA SALWA NUR AINI SYIFA", kelas: "10-B"},
+{username: "13895", password: "12345", name: "ARINDA INTAN CAHYA PUTRI", kelas: "10-B"},
+{username: "13896", password: "12345", name: "ASYIFA KHAIRUNISA SUKMAWAN", kelas: "10-B"},
+{username: "13897", password: "12345", name: "AZZAM KAMIL BAIHAQI", kelas: "10-B"},
+{username: "13898", password: "12345", name: "AZZAM MUBAROQ", kelas: "10-B"},
+{username: "13899", password: "12345", name: "BUNGA INDAH CAHYANINGRUM", kelas: "10-B"},
+{username: "13900", password: "12345", name: "CHRISTINE AYU OKTAVIANI", kelas: "10-B"},
+{username: "13901", password: "12345", name: "DEVI KINARYOSI", kelas: "10-B"},
+{username: "13902", password: "12345", name: "DINARA YAFI KAMILA", kelas: "10-B"},
+{username: "13903", password: "12345", name: "GHAILAN RAJATA PRADITYA", kelas: "10-B"},
+{username: "13904", password: "12345", name: "HAFIZH NOER ISNAINI", kelas: "10-B"},
+{username: "13905", password: "12345", name: "HASNA' AZZAH RAFIDAH", kelas: "10-B"},
+{username: "13906", password: "12345", name: "KELVIN APRILIA SUSANTO", kelas: "10-B"},
+{username: "13907", password: "12345", name: "KHAIDIRA DUAN NAHL", kelas: "10-B"},
+{username: "13908", password: "12345", name: "LUTHFIA MUTIARA TSANI", kelas: "10-B"},
+{username: "13909", password: "12345", name: "LYRANA SCARLETTA AZIMI", kelas: "10-B"},
+{username: "13910", password: "12345", name: "MUHAMAD RAIHAN ADI WIJAYA", kelas: "10-B"},
+{username: "13911", password: "12345", name: "MUHAMMAD ANZA AL-BARI ESFAHAN", kelas: "10-B"},
+{username: "13912", password: "12345", name: "MUHAMMAD AQILLA RAVAEZA AKRAM", kelas: "10-B"},
+{username: "13913", password: "12345", name: "MUHAMMAD YUSUF ASSALAM", kelas: "10-B"},
+{username: "13914", password: "12345", name: "NAJWA NAURA ANNISA", kelas: "10-B"},
+{username: "13915", password: "12345", name: "NAZIFA ALYA HAPSARI", kelas: "10-B"},
+{username: "13916", password: "12345", name: "PUTRI KEYSHA KINETIKA", kelas: "10-B"},
+{username: "13917", password: "12345", name: "QIZA RIZQI RAMADANI PUTRI NURYANTO", kelas: "10-B"},
+{username: "13918", password: "12345", name: "RA. NURMACITA KHAIRA LABIBA", kelas: "10-B"},
+{username: "13919", password: "12345", name: "RAMADHAN", kelas: "10-B"},
+{username: "13920", password: "12345", name: "SAFIRA SAFINATUN KHASANAH", kelas: "10-B"},
+{username: "13921", password: "12345", name: "TRANGING MANAH", kelas: "10-B"},
+{username: "13922", password: "12345", name: "VANIA GITTA RAMADHANI", kelas: "10-B"},
+{username: "13923", password: "12345", name: "ZAINATHA KUSTARIANA", kelas: "10-B"},
+{username: "13924", password: "12345", name: "AFUAN RAMADHANI FAUZIARTA", kelas: "10-C"},
+{username: "13925", password: "12345", name: "AGNETA ROSALIA IZZATUNIZA", kelas: "10-C"},
+{username: "13926", password: "12345", name: "ALIFA AZKA AULIA", kelas: "10-C"},
+{username: "13927", password: "12345", name: "ALMIRA EVA AULIA", kelas: "10-C"},
+{username: "13928", password: "12345", name: "AMIRA ELMA TSAQIFA", kelas: "10-C"},
+{username: "13929", password: "12345", name: "ANSYHAR KAYSAN SYAHRIR", kelas: "10-C"},
+{username: "13930", password: "12345", name: "ARYA KUSUMA SAPUTRA", kelas: "10-C"},
+{username: "13931", password: "12345", name: "CINDY RESTU ARDELIA", kelas: "10-C"},
+{username: "13932", password: "12345", name: "DITO IRFANDI ADITYA", kelas: "10-C"},
+{username: "13933", password: "12345", name: "DZAKA FAHLEVI ARYAPUTRA", kelas: "10-C"},
+{username: "13934", password: "12345", name: "FAUZIAH DWI RAHMADANI", kelas: "10-C"},
+{username: "13935", password: "12345", name: "FAYYADH ALGHIFARI", kelas: "10-C"},
+{username: "13936", password: "12345", name: "HELMINA CLARINTA DAMERO SINAGA", kelas: "10-C"},
+{username: "13937", password: "12345", name: "KARISMA UNIKE PADY PUTRI", kelas: "10-C"},
+{username: "13938", password: "12345", name: "KINANTI DYANDRA ASMARA", kelas: "10-C"},
+{username: "13939", password: "12345", name: "LAILATUS NUR AMALIA", kelas: "10-C"},
+{username: "13940", password: "12345", name: "LATIFAH NILAM RAMADHANI", kelas: "10-C"},
+{username: "13941", password: "12345", name: "LINDA NURCAHYANI", kelas: "10-C"},
+{username: "13942", password: "12345", name: "LINGGA MONICA PUTRI JOVANKA", kelas: "10-C"},
+{username: "13943", password: "12345", name: "LINTANG KARUNIA INSANI", kelas: "10-C"},
+{username: "13944", password: "12345", name: "LUTFIA MUFIDA HIDAYAT", kelas: "10-C"},
+{username: "13945", password: "12345", name: "MALIKA RIZKY AMALIA", kelas: "10-C"},
+{username: "13946", password: "12345", name: "MICHAEL KEVANO PUTRA YUNARKO", kelas: "10-C"},
+{username: "13947", password: "12345", name: "MUHAMMAD IHSAN RAFIF ABDUR RASYID", kelas: "10-C"},
+{username: "13948", password: "12345", name: "NADHIF AIDAN ATALLAH", kelas: "10-C"},
+{username: "13949", password: "12345", name: "NAJWAA ANIS SAFITRI", kelas: "10-C"},
+{username: "13950", password: "12345", name: "NASYWA SALSABILA", kelas: "10-C"},
+{username: "13951", password: "12345", name: "NAUFAL RAFA AKMAL RADITHYA", kelas: "10-C"},
+{username: "13952", password: "12345", name: "NIRBITA CALYA RAHMADANI", kelas: "10-C"},
+{username: "13953", password: "12345", name: "NOVA ELVITA ZAHRA", kelas: "10-C"},
+{username: "13954", password: "12345", name: "PRISDAMURTI BUDI NASTITI", kelas: "10-C"},
+{username: "13955", password: "12345", name: "QUEENSA ARDHIANA MUTIARA KHATULISTIWA", kelas: "10-C"},
+{username: "13956", password: "12345", name: "QUINNSA EDGINA MANGGALI", kelas: "10-C"},
+{username: "13957", password: "12345", name: "RANGGA ADITYA PRATAMA", kelas: "10-C"},
+{username: "13958", password: "12345", name: "RHEA CALYA ASHADEWI", kelas: "10-C"},
+{username: "13959", password: "12345", name: "VARADHITA SHABIRA ARRASYA", kelas: "10-C"},
+{username: "13960", password: "12345", name: "ABDURRACHMAN DZAKWAN USLAHWASATA", kelas: "10-D"},
+{username: "13961", password: "12345", name: "ALISKA BUNGA CANTIKA", kelas: "10-D"},
+{username: "13962", password: "12345", name: "ANDIKA FARIZKA WIJAYA", kelas: "10-D"},
+{username: "13963", password: "12345", name: "AQELA NUR NADYA SHAFWAH", kelas: "10-D"},
+{username: "13964", password: "12345", name: "ARDZAKI DIMAS SATYA AJI", kelas: "10-D"},
+{username: "13965", password: "12345", name: "ARIFUDIN MANGGALA PUTRA", kelas: "10-D"},
+{username: "13966", password: "12345", name: "ARLINTANG RANDY PUTRI UDAYANI", kelas: "10-D"},
+{username: "13967", password: "12345", name: "AYU AMELIA SURYA ASMARA", kelas: "10-D"},
+{username: "13968", password: "12345", name: "CESALIA RAMADANI", kelas: "10-D"},
+{username: "13969", password: "12345", name: "CHANDANI MAHESWARI", kelas: "10-D"},
+{username: "13970", password: "12345", name: "DEWINA NAJWA FAIRUZY", kelas: "10-D"},
+{username: "13971", password: "12345", name: "DEWINA SERUNI WIDYA PRASTANTI", kelas: "10-D"},
+{username: "13972", password: "12345", name: "DHIRA MAHARDHIKA AKHMAD", kelas: "10-D"},
+{username: "13973", password: "12345", name: "FAJAR HAMDAN NAIM", kelas: "10-D"},
+{username: "13974", password: "12345", name: "FARRELL HASANI MUSTAFID SAPUTRA", kelas: "10-D"},
+{username: "13975", password: "12345", name: "KALIFIA LIRMAHSARI PUTRI", kelas: "10-D"},
+{username: "13976", password: "12345", name: "KAYLA ADIBA TUFFAHATI", kelas: "10-D"},
+{username: "13977", password: "12345", name: "KIRANA APRILIA LISANDRA", kelas: "10-D"},
+{username: "13978", password: "12345", name: "LUTHFI ERANTIO NUGRAHA", kelas: "10-D"},
+{username: "13979", password: "12345", name: "MAHARANI PUJI ASTUTI", kelas: "10-D"},
+{username: "13980", password: "12345", name: "MARIANA CAHYA WULANSARI", kelas: "10-D"},
+{username: "13981", password: "12345", name: "NABILA ARDIANA PUTRI RIYANTO", kelas: "10-D"},
+{username: "13982", password: "12345", name: "NADHIRA SYIFA LISTYANINGSIH", kelas: "10-D"},
+{username: "13983", password: "12345", name: "NAJWA AZ ZAHRA RAMADANI", kelas: "10-D"},
+{username: "13984", password: "12345", name: "NAJWA NURRAHMA SALSABILA", kelas: "10-D"},
+{username: "13985", password: "12345", name: "NAQUITA SAKHI NUGROHO", kelas: "10-D"},
+{username: "13986", password: "12345", name: "NAYLA RAMADHANI PUTRI NOTTY", kelas: "10-D"},
+{username: "13987", password: "12345", name: "NORMALITA ILHAM NUSA BHAKTI", kelas: "10-D"},
+{username: "13988", password: "12345", name: "RADITYA MARTDHIANSYAH", kelas: "10-D"},
+{username: "13989", password: "12345", name: "RAIHAN LUKMAN HAKIM", kelas: "10-D"},
+{username: "13990", password: "12345", name: "REENA BELA AZARIN", kelas: "10-D"},
+{username: "13991", password: "12345", name: "RIO ADE SETYAWAN", kelas: "10-D"},
+{username: "13992", password: "12345", name: "SABRINA LACITA RAMADHANI", kelas: "10-D"},
+{username: "13993", password: "12345", name: "SAFA CHESA SAFITRI", kelas: "10-D"},
+{username: "13994", password: "12345", name: "SALSABILA PARAMITA PALUPI", kelas: "10-D"},
+{username: "13995", password: "12345", name: "SHIFA RAMADHANTI", kelas: "10-D"},
+{username: "13996", password: "12345", name: "ABIYYAH RISMA DIASIHTA", kelas: "10-E"},
+{username: "13997", password: "12345", name: "AHMADI ARYO PRADIPTO", kelas: "10-E"},
+{username: "13998", password: "12345", name: "AISHA KAYLA RAMADHANTI", kelas: "10-E"},
+{username: "13999", password: "12345", name: "ALEXA ARISMA ANG", kelas: "10-E"},
+{username: "14000", password: "12345", name: "ANOM NUR HADIATMAJA", kelas: "10-E"},
+{username: "14001", password: "12345", name: "ARFA AMELIA INSANI", kelas: "10-E"},
+{username: "14002", password: "12345", name: "ARLIN ZAFIRA KURNIAWAN", kelas: "10-E"},
+{username: "14003", password: "12345", name: "AZ ZAHRA DELFA ARFEBRIYAN", kelas: "10-E"},
+{username: "14004", password: "12345", name: "CITRA NALA HAMIZAH", kelas: "10-E"},
+{username: "14005", password: "12345", name: "CLEO EVELYN RAMADHANI", kelas: "10-E"},
+{username: "14006", password: "12345", name: "DAVRILA WILLY PRASASTI", kelas: "10-E"},
+{username: "14007", password: "12345", name: "DEVINA AISA LIONG", kelas: "10-E"},
+{username: "14008", password: "12345", name: "DINI MAUHIBA DZAKY", kelas: "10-E"},
+{username: "14009", password: "12345", name: "FATHIYYA YASMIN", kelas: "10-E"},
+{username: "14010", password: "12345", name: "FATIHAH AZA NADA RAMADANI", kelas: "10-E"},
+{username: "14011", password: "12345", name: "GUSTI YUDA PRAWIRA", kelas: "10-E"},
+{username: "14012", password: "12345", name: "IMAWAN MUJAHID MUHAMMADI", kelas: "10-E"},
+{username: "14013", password: "12345", name: "JASAROH KAROMAH", kelas: "10-E"},
+{username: "14014", password: "12345", name: "KYNTHIA JANITRA GANTARI", kelas: "10-E"},
+{username: "14015", password: "12345", name: "MUCHAMMAD RAFA ABIYA RAMADHAN", kelas: "10-E"},
+{username: "14016", password: "12345", name: "MUHAMMAD BAGUS FIRGIAWAN", kelas: "10-E"},
+{username: "14017", password: "12345", name: "MUHAMMAD DAEGAL HILMI ARYASUTA", kelas: "10-E"},
+{username: "14018", password: "12345", name: "NAJWA ALTHAFIA PUJIAJI", kelas: "10-E"},
+{username: "14019", password: "12345", name: "NURRAFA' DAFFITO FAHRIZAL", kelas: "10-E"},
+{username: "14020", password: "12345", name: "PUTRI ASTRI FINANDA", kelas: "10-E"},
+{username: "14021", password: "12345", name: "PUTRI SALWA NURAINI", kelas: "10-E"},
+{username: "14022", password: "12345", name: "RAFIQA ZAHRATUNNISA", kelas: "10-E"},
+{username: "14023", password: "12345", name: "RENITA NOVARISA ARSHANDA", kelas: "10-E"},
+{username: "14024", password: "12345", name: "RIVANNO KUSUMA PUTRA", kelas: "10-E"},
+{username: "14025", password: "12345", name: "RIZKI TIARA MAULIDHANI SUHARTANA", kelas: "10-E"},
+{username: "14026", password: "12345", name: "SEKAR AYU CAHYANINGTIYAS", kelas: "10-E"},
+{username: "14027", password: "12345", name: "SHAFIRA NATHANIA AZAHRA", kelas: "10-E"},
+{username: "14028", password: "12345", name: "SYAFIRA ADISTI PUSPITA", kelas: "10-E"},
+{username: "14029", password: "12345", name: "TALITHA CERYL NASYWA PUJIANSYAH", kelas: "10-E"},
+{username: "14030", password: "12345", name: "VIRAYA NIKITA ANSORI", kelas: "10-E"},
+{username: "14031", password: "12345", name: "WISNU AULIA BAKTI", kelas: "10-E"},
+{username: "14032", password: "12345", name: "AFIDATUS SOLICHATUN", kelas: "10-F"},
+{username: "14033", password: "12345", name: "ALHAQIE", kelas: "10-F"},
+{username: "14034", password: "12345", name: "ALIMA NAFIA SAMARA", kelas: "10-F"},
+{username: "14035", password: "12345", name: "ALIYA GHASSANI", kelas: "10-F"},
+{username: "14036", password: "12345", name: "ANGGITA SHELA MEYRADANI", kelas: "10-F"},
+{username: "14037", password: "12345", name: "AQILA RAJWA PUTRI ARTA", kelas: "10-F"},
+{username: "14038", password: "12345", name: "ARROYANI SUGI RAHARJA", kelas: "10-F"},
+{username: "14039", password: "12345", name: "BANYU JATI PRASETYO HERJUNO", kelas: "10-F"},
+{username: "14040", password: "12345", name: "BINTANG FATHAN INDRAYUDHA", kelas: "10-F"},
+{username: "14041", password: "12345", name: "DANEYSYA YULIANA PRIHANTARI", kelas: "10-F"},
+{username: "14042", password: "12345", name: "GAYUH ALFI ANGGRAENI", kelas: "10-F"},
+{username: "14043", password: "12345", name: "GHAISANI QUINN NORIESDA QUROTAA'YUN", kelas: "10-F"},
+{username: "14044", password: "12345", name: "GHI FAHRI MEYLANDRI", kelas: "10-F"},
+{username: "14045", password: "12345", name: "HASNA AGATHA KHALILAH FARA", kelas: "10-F"},
+{username: "14046", password: "12345", name: "HUMAIRA AISYAH AZ ZAHRA", kelas: "10-F"},
+{username: "14047", password: "12345", name: "IKHLAS KHAIRUL AZZAM", kelas: "10-F"},
+{username: "14048", password: "12345", name: "KAYLA AZZAHRA EL CHOIR", kelas: "10-F"},
+{username: "14049", password: "12345", name: "KEISHA ANINDYA PUTRI", kelas: "10-F"},
+{username: "14050", password: "12345", name: "KHANSA NADA", kelas: "10-F"},
+{username: "14051", password: "12345", name: "LUTHFI INDRIYANI SHOLEH", kelas: "10-F"},
+{username: "14052", password: "12345", name: "MAR'ATUN FITRIYAH", kelas: "10-F"},
+{username: "14053", password: "12345", name: "MUHAMMAD RAYZAN PURNOMO", kelas: "10-F"},
+{username: "14054", password: "12345", name: "NAUFAL RAFIF PRASETYA TANUWIJAYA", kelas: "10-F"},
+{username: "14055", password: "12345", name: "NAYLA NAFISA ANANDANI", kelas: "10-F"},
+{username: "14056", password: "12345", name: "NURIZA LAINATUS SHIFFA", kelas: "10-F"},
+{username: "14057", password: "12345", name: "PANDU GABRIEL PRATAMA", kelas: "10-F"},
+{username: "14058", password: "12345", name: "PANJI AZKA MADANI", kelas: "10-F"},
+{username: "14059", password: "12345", name: "QONITA KHANSA ISKANDAR", kelas: "10-F"},
+{username: "14060", password: "12345", name: "RADILLA NUR RAMADHANI", kelas: "10-F"},
+{username: "14061", password: "12345", name: "RAISYA APRILIA", kelas: "10-F"},
+{username: "14062", password: "12345", name: "RAZANA ALTAFIA RAMADHANI HERMAWAN", kelas: "10-F"},
+{username: "14063", password: "12345", name: "RICKO MAULANA HARIS", kelas: "10-F"},
+{username: "14064", password: "12345", name: "USWATUN KHASANAH", kelas: "10-F"},
+{username: "14065", password: "12345", name: "VANESSA RORO ANGGRAINI", kelas: "10-F"},
+{username: "14066", password: "12345", name: "VRILA ZAHRA MAULIDINA", kelas: "10-F"},
+{username: "14067", password: "12345", name: "YUANITA OKTAVIANI PUTRI", kelas: "10-F"},
+{username: "14068", password: "12345", name: "ADDINA NUR KHARISA INDRASWARI", kelas: "10-G"},
+{username: "14069", password: "12345", name: "ADHWA NURISTA RADIN", kelas: "10-G"},
+{username: "14070", password: "12345", name: "ANGGUN FEBRIANTI", kelas: "10-G"},
+{username: "14071", password: "12345", name: "AQILA ILAYKA ASYKUU", kelas: "10-G"},
+{username: "14072", password: "12345", name: "ASHFA FAUZI ROKHMAN", kelas: "10-G"},
+{username: "14073", password: "12345", name: "AYUHANA KHAIRUL NABILA", kelas: "10-G"},
+{username: "14074", password: "12345", name: "AZIZAH NURUL AMRI", kelas: "10-G"},
+{username: "14075", password: "12345", name: "CANTIKA MUTIARA DWI RAMADANI", kelas: "10-G"},
+{username: "14076", password: "12345", name: "CHIARRA SHAREEN NAYRAYA", kelas: "10-G"},
+{username: "14077", password: "12345", name: "ELVIRA QURATUL ATIKA CHAFID", kelas: "10-G"},
+{username: "14078", password: "12345", name: "FAIZA AZKA ANGGITA RAMADHANI", kelas: "10-G"},
+{username: "14079", password: "12345", name: "HANIFA RISTI YULFIANI", kelas: "10-G"},
+{username: "14080", password: "12345", name: "HAYYUNAIFA QUINN ZADA EARLENE", kelas: "10-G"},
+{username: "14081", password: "12345", name: "IBRAHIM RAFIF HADI WARDOYO", kelas: "10-G"},
+{username: "14082", password: "12345", name: "INSANIA SANTUN", kelas: "10-G"},
+{username: "14083", password: "12345", name: "JASMINE AYESHA KAMIL", kelas: "10-G"},
+{username: "14084", password: "12345", name: "KEVIN HILMI NOVANDITO", kelas: "10-G"},
+{username: "14085", password: "12345", name: "KEYLA AZZAHRA PUTRI ARIANA", kelas: "10-G"},
+{username: "14086", password: "12345", name: "MAYLANA CANTIKA PUTRI", kelas: "10-G"},
+{username: "14087", password: "12345", name: "MUHAMMAD AMMAR", kelas: "10-G"},
+{username: "14088", password: "12345", name: "MUHAMMAD FAIZAL FAIZ", kelas: "10-G"},
+{username: "14089", password: "12345", name: "MUHAMMAD FAZA RAFLI", kelas: "10-G"},
+{username: "14090", password: "12345", name: "MUHAMMAD RAFKA PUTRA PRASETYA ANGGUN WW", kelas: "10-G"},
+{username: "14091", password: "12345", name: "MUHAMMAD SYAUQI KARIZA AHYAN", kelas: "10-G"},
+{username: "14092", password: "12345", name: "NAMIRA SAQINA ARNINDYA SUKIRNO", kelas: "10-G"},
+{username: "14093", password: "12345", name: "NAURA BILQIS AHMADHILLA", kelas: "10-G"},
+{username: "14094", password: "12345", name: "NAZA ZAHKIYA AGUSTI", kelas: "10-G"},
+{username: "14095", password: "12345", name: "NIKEISHA NALA WIDYADHANA", kelas: "10-G"},
+{username: "14096", password: "12345", name: "PANDAN AHZA ANANTA", kelas: "10-G"},
+{username: "14097", password: "12345", name: "REIHAN MAULANA DZAKI", kelas: "10-G"},
+{username: "14098", password: "12345", name: "SERLIANA RAMADHANTI", kelas: "10-G"},
+{username: "14099", password: "12345", name: "SILVA RASYA SETYOWATI", kelas: "10-G"},
+{username: "14100", password: "12345", name: "THALISSA CHINDAGA NAYOTTAMA", kelas: "10-G"},
+{username: "14101", password: "12345", name: "TIAN SUCI RAMADHANI", kelas: "10-G"},
+{username: "14102", password: "12345", name: "WIDARUNDINA DIKRATNAMA ANAKYA", kelas: "10-G"},
+{username: "14103", password: "12345", name: "ZAHRA TUSITA NURTALIA", kelas: "10-G"},
+{username: "13707", password: "12345", name: "ABDURRAHMAN ARYASATYA", kelas: "11-A"},
+{username: "13816", password: "12345", name: "ADINDA DWI PUTRI ARDANA", kelas: "11-A"},
+{username: "13709", password: "12345", name: "AILSA BELVA SYAHLA AZARIA", kelas: "11-A"},
+{username: "13636", password: "12345", name: "ALMIRA AGHNI PRATIWI", kelas: "11-A"},
+{username: "13712", password: "12345", name: "ANGGUN PRADITA AULIA PUTRI HAMIDAH", kelas: "11-A"},
+{username: "13713", password: "12345", name: "ANNISA YUKI PRADANI", kelas: "11-A"},
+{username: "13602", password: "12345", name: "ARDHANA INKA SETYAWAN", kelas: "11-A"},
+{username: "13673", password: "12345", name: "ASKAROB AKBAR FAHRIZA", kelas: "11-A"},
+{username: "13716", password: "12345", name: "CAHYA ETIKA SOFIYANI DEWI", kelas: "11-A"},
+{username: "13606", password: "12345", name: "CITRA RISTANTI", kelas: "11-A"},
+{username: "13829", password: "12345", name: "DESTA ARUM NASIFA NURAINI", kelas: "11-A"},
+{username: "13721", password: "12345", name: "FAHIRA SEKAR TANJUNG", kelas: "11-A"},
+{username: "13724", password: "12345", name: "FAUZARIQ NISMARA TYANANDA", kelas: "11-A"},
+{username: "13833", password: "12345", name: "FIRA SILVIA GUSRINA", kelas: "11-A"},
+{username: "13796", password: "12345", name: "HAFIDH DANU ARYOPATI SANTOSO", kelas: "11-A"},
+{username: "13836", password: "12345", name: "HANIFAH PUTRI NUR HALIMAH", kelas: "11-A"},
+{username: "13728", password: "12345", name: "ISNAN MAHFUD AGUNG FAIZAL", kelas: "11-A"},
+{username: "13838", password: "12345", name: "KHOIRUL RIZKY", kelas: "11-A"},
+{username: "13730", password: "12345", name: "KIRANA NADIA PUTRI", kelas: "11-A"},
+{username: "13840", password: "12345", name: "KURNIATI SOLIKHAH", kelas: "11-A"},
+{username: "13655", password: "12345", name: "MARSHELLINUS BAGUS DEWANTO", kelas: "11-A"},
+{username: "13732", password: "12345", name: "MAURA MAHARANI", kelas: "11-A"},
+{username: "13657", password: "12345", name: "MICHELLE LUNA APRIANS", kelas: "11-A"},
+{username: "13694", password: "12345", name: "MUTHIA ZHARIFA TASNIM", kelas: "11-A"},
+{username: "13660", password: "12345", name: "NAJMA UFUQI RAHMA", kelas: "11-A"},
+{username: "13769", password: "12345", name: "NOVANA DWI ASTUTI", kelas: "11-A"},
+{username: "13662", password: "12345", name: "NUR ROSHWAN ILYAS", kelas: "11-A"},
+{username: "13807", password: "12345", name: "RADJA ARZAMORA MUZAKI", kelas: "11-A"},
+{username: "13774", password: "12345", name: "RIFDA NADHIFA KAMELIA", kelas: "11-A"},
+{username: "13665", password: "12345", name: "SHELIN MAULIDINA PUTRI MAHARANI", kelas: "11-A"},
+{username: "13813", password: "12345", name: "SYAFA GENDHIS ANNAFI", kelas: "11-A"},
+{username: "13666", password: "12345", name: "SYIFA PUTRI NAFSIANA", kelas: "11-A"},
+{username: "13741", password: "12345", name: "TARA AYU KEZIA DIANDRA", kelas: "11-A"},
+{username: "13632", password: "12345", name: "TARSISIUS EVAN MAHARDIKA PRASTYA", kelas: "11-A"},
+{username: "13633", password: "12345", name: "TIARA CARISSA PUTRI", kelas: "11-A"},
+{username: "13848", password: "12345", name: "VARA ELSA AURORA", kelas: "11-A"},
+{username: "13744", password: "12345", name: "AHMAD MUZAKKY RISMAWAN AL FATTAHILLAH", kelas: "11-B"},
+{username: "13745", password: "12345", name: "AHMAD SHOFWAN ABDILLAH", kelas: "11-B"},
+{username: "13823", password: "12345", name: "ANNISA DWI YULIANI", kelas: "11-B"},
+{username: "13780", password: "12345", name: "ARIQ MAULANA ZAKI", kelas: "11-B"},
+{username: "13605", password: "12345", name: "AURELIA AZHAR LARASATI", kelas: "11-B"},
+{username: "13785", password: "12345", name: "BRILIAN LATIF WIBOWO", kelas: "11-B"},
+{username: "13753", password: "12345", name: "DAYINTA LAILY WIJAYANI", kelas: "11-B"},
+{username: "13755", password: "12345", name: "DELLANOVA RAHADATUL 'AISYI", kelas: "11-B"},
+{username: "13607", password: "12345", name: "DIAJENG YUVANE DUARDHANI", kelas: "11-B"},
+{username: "13757", password: "12345", name: "DWIKI ZAKY APRILIANTO", kelas: "11-B"},
+{username: "13720", password: "12345", name: "ERISA MEILANI KHOIRIYAH", kelas: "11-B"},
+{username: "13791", password: "12345", name: "EWALDO MINZEKE", kelas: "11-B"},
+{username: "13722", password: "12345", name: "FAHRILA FAZAKIR DETRIANA PUTI", kelas: "11-B"},
+{username: "13609", password: "12345", name: "FAKHRUNISA NURYAN ISNA", kelas: "11-B"},
+{username: "13723", password: "12345", name: "FATHONI CANDRA KUSUMA", kelas: "11-B"},
+{username: "13792", password: "12345", name: "FATIKA KHOIRU NISA", kelas: "11-B"},
+{username: "13760", password: "12345", name: "FRIDA NUR ZAZKIA RADISTY", kelas: "11-B"},
+{username: "13650", password: "12345", name: "GATHAM AZIZ TAQWIM", kelas: "11-B"},
+{username: "13834", password: "12345", name: "GILANG AL FAROZI", kelas: "11-B"},
+{username: "13686", password: "12345", name: "IFANDA FITRA TAMA", kelas: "11-B"},
+{username: "13652", password: "12345", name: "KENNY RAFAY MAHBEER", kelas: "11-B"},
+{username: "13729", password: "12345", name: "KEVIN ADRIAN RAJENDRAKHA", kelas: "11-B"},
+{username: "13800", password: "12345", name: "LATIFA NUR LISKA PUTRI", kelas: "11-B"},
+{username: "13842", password: "12345", name: "MANGGOLO YUDO PUTRO LEGOWO", kelas: "11-B"},
+{username: "13766", password: "12345", name: "MUHAMMAD ALIFIANTO AMANULLAH", kelas: "11-B"},
+{username: "13843", password: "12345", name: "MUHAMMAD IBNU NADHIF MUFLIH", kelas: "11-B"},
+{username: "13768", password: "12345", name: "NADIA AULIA SHAFA", kelas: "11-B"},
+{username: "13661", password: "12345", name: "NASYA AULIA HAFIDAH", kelas: "11-B"},
+{username: "13770", password: "12345", name: "NURUL AZKIYA MOZZA", kelas: "11-B"},
+{username: "13698", password: "12345", name: "OKTAVIA NUR UTARI", kelas: "11-B"},
+{username: "13771", password: "12345", name: "PANDU RASENDRYA ADHIYASTA AFGANI", kelas: "11-B"},
+{username: "13776", password: "12345", name: "SHEVA ANDRIANO DHASILVA", kelas: "11-B"},
+{username: "13705", password: "12345", name: "SHOFIA IRMA NUR AZIZAH", kelas: "11-B"},
+{username: "13849", password: "12345", name: "VIENCYA FEMALESAN PUTRINALYA", kelas: "11-B"},
+{username: "13706", password: "12345", name: "WIDYA SAPUTRI", kelas: "11-B"},
+{username: "13742", password: "12345", name: "WIDYANA DAMARWATI", kelas: "11-B"},
+{username: "13671", password: "12345", name: "ADITIYA KUSUMA PUTRA LISTIYO", kelas: "11-C"},
+{username: "13599", password: "12345", name: "AGITYA FAIRUZ DZAKIYYA", kelas: "11-C"},
+{username: "13639", password: "12345", name: "APRILIA LINTANG KARIENA", kelas: "11-C"},
+{username: "13824", password: "12345", name: "ARIFAH PUTRI PRIANDANI", kelas: "11-C"},
+{username: "13825", password: "12345", name: "ATHAYA YUMNA SAYIDA", kelas: "11-C"},
+{username: "13752", password: "12345", name: "CHAISYA CHANDRA KIRANA HERMAWAN", kelas: "11-C"},
+{username: "13644", password: "12345", name: "CHRISYA AYU PURNOMO", kelas: "11-C"},
+{username: "13828", password: "12345", name: "DAANISH SYNNOVE ABDULLAH", kelas: "11-C"},
+{username: "13717", password: "12345", name: "DAFFA MICHO SAPUTRA", kelas: "11-C"},
+{username: "13788", password: "12345", name: "DN KENZIE JAVAS WISTARA", kelas: "11-C"},
+{username: "13679", password: "12345", name: "FADHIL RAYHAN RADMANA", kelas: "11-C"},
+{username: "13795", password: "12345", name: "FELYA AYUDHYA ANGGRAINI", kelas: "11-C"},
+{username: "13725", password: "12345", name: "FEMBAYUN CAHYANINGTYAS", kelas: "11-C"},
+{username: "13759", password: "12345", name: "FIRDIANA MILANI ASYIFA", kelas: "11-C"},
+{username: "13684", password: "12345", name: "GABRIELLA OKTOVIDIA ESTININGRUM", kelas: "11-C"},
+{username: "13688", password: "12345", name: "INDRA RAMADITYA AMA", kelas: "11-C"},
+{username: "13798", password: "12345", name: "KHOLIFATUN FADHILLAH RACHMADANI", kelas: "11-C"},
+{username: "13839", password: "12345", name: "KHUMAIRA NASHIFA", kelas: "11-C"},
+{username: "13764", password: "12345", name: "LAILA AZZA DELILA", kelas: "11-C"},
+{username: "13765", password: "12345", name: "MEISYAFILLA ARUM WULANDARI", kelas: "11-C"},
+{username: "13656", password: "12345", name: "MEZALUNA CANDANA SAKHI FADANTYA", kelas: "11-C"},
+{username: "13619", password: "12345", name: "MUHAMMAD RIZKY SAPUTRA", kelas: "11-C"},
+{username: "13844", password: "12345", name: "NAAZNEEN NAFISAH RAHMAN", kelas: "11-C"},
+{username: "13734", password: "12345", name: "NABILA KHOIRUNNISA'", kelas: "11-C"},
+{username: "13620", password: "12345", name: "NAFLA LAILA ARIEQA NABIHHANA", kelas: "11-C"},
+{username: "13735", password: "12345", name: "NIXON RAFIF PRAYOGA", kelas: "11-C"},
+{username: "13806", password: "12345", name: "NURLITA PUSPITA SARI", kelas: "11-C"},
+{username: "13736", password: "12345", name: "RAHMA AZAKHRA", kelas: "11-C"},
+{username: "13626", password: "12345", name: "RIDHO AMINULLOH", kelas: "11-C"},
+{username: "13701", password: "12345", name: "RIVANA BUNGA ASMARANI", kelas: "11-C"},
+{username: "13739", password: "12345", name: "SALWA AMALA PUTRI", kelas: "11-C"},
+{username: "13775", password: "12345", name: "SHAFA' AGHANIA GHASSANI FATHIN", kelas: "11-C"},
+{username: "13740", password: "12345", name: "SHAKILA MEHERUNISSA RAINA WIDODO", kelas: "11-C"},
+{username: "13812", password: "12345", name: "SHIRIN NASWA MADANI", kelas: "11-C"},
+{username: "13630", password: "12345", name: "SYIFA ALIFATUL MAULIDA", kelas: "11-C"},
+{username: "13850", password: "12345", name: "ZAHRA ARIF NUR ASYIFAH", kelas: "11-C"},
+{username: "13635", password: "12345", name: "ACHMAD FARREL PRADITYA", kelas: "11-D"},
+{username: "13817", password: "12345", name: "ADNAN YULIYANTO", kelas: "11-D"},
+{username: "13746", password: "12345", name: "ALFITO DIMAS WIBOWO", kelas: "11-D"},
+{username: "13779", password: "12345", name: "AL-GHAZY FAISA AHNAF", kelas: "11-D"},
+{username: "13638", password: "12345", name: "ANISSA FARAHDILLAH", kelas: "11-D"},
+{username: "13750", password: "12345", name: "ARRAFAD SARIF HIDAYAH", kelas: "11-D"},
+{username: "13640", password: "12345", name: "AULIA RAHMAWATI", kelas: "11-D"},
+{username: "13784", password: "12345", name: "AZMI HANA KHAIRUNNISA", kelas: "11-D"},
+{username: "13641", password: "12345", name: "AZZAHRA KHOIRUNNISA RAMADHANI", kelas: "11-D"},
+{username: "13754", password: "12345", name: "DEFANY FAUZIAH RACHMAWATI", kelas: "11-D"},
+{username: "13786", password: "12345", name: "DIMAS CAHYO WIJOYO", kelas: "11-D"},
+{username: "13756", password: "12345", name: "DIRACALISTA KUSSAFITRI", kelas: "11-D"},
+{username: "13608", password: "12345", name: "DZAKIA HASNA FAUZIAH", kelas: "11-D"},
+{username: "13645", password: "12345", name: "DZAKY ASKAR AL ARQOM", kelas: "11-D"},
+{username: "13790", password: "12345", name: "ERLINA YULIANINGSIH", kelas: "11-D"},
+{username: "13832", password: "12345", name: "FATAN ANSHORY", kelas: "11-D"},
+{username: "13682", password: "12345", name: "FAWZAN APRIANSYAH", kelas: "11-D"},
+{username: "13651", password: "12345", name: "IQBAL AGRA KEANDRA", kelas: "11-D"},
+{username: "13613", password: "12345", name: "ISNA NURUL AZIZAH", kelas: "11-D"},
+{username: "13615", password: "12345", name: "JONATHAN DEWA AGRISTANT PRABENDRA", kelas: "11-D"},
+{username: "13797", password: "12345", name: "KEISA DEVITA RAHMANJANI", kelas: "11-D"},
+{username: "13654", password: "12345", name: "MANUBENY YUSUF MULYA", kelas: "11-D"},
+{username: "13617", password: "12345", name: "MAYRINDA LAKSANA PUTRI", kelas: "11-D"},
+{username: "13801", password: "12345", name: "MESSIA AZALIA ZHAFIF", kelas: "11-D"},
+{username: "13767", password: "12345", name: "MUTIARA NALURI DEWI", kelas: "11-D"},
+{username: "13659", password: "12345", name: "NABILA MUKHBITA PUTRI", kelas: "11-D"},
+{username: "13622", password: "12345", name: "NELA WATI NAZWA", kelas: "11-D"},
+{username: "13846", password: "12345", name: "QIRANEVA ZAMNA GHEA NAREZTA", kelas: "11-D"},
+{username: "13808", password: "12345", name: "RAHMAT ZAMHARIR QUROTU'AIN", kelas: "11-D"},
+{username: "13624", password: "12345", name: "RAISSA SAFANA", kelas: "11-D"},
+{username: "13625", password: "12345", name: "RANIA JASMINE RESPATRIA", kelas: "11-D"},
+{username: "13664", password: "12345", name: "RENATHA AULIA PUTRI", kelas: "11-D"},
+{username: "13702", password: "12345", name: "RIZKY NUGRAHA", kelas: "11-D"},
+{username: "13809", password: "12345", name: "RIZQI GINELAR UNGGUL DAROJAD", kelas: "11-D"},
+{username: "13814", password: "12345", name: "TYAGA MAHARKA YUSUF", kelas: "11-D"},
+{username: "13669", password: "12345", name: "YEMIMA MAWAR SEPHA", kelas: "11-D"},
+{username: "13711", password: "12345", name: "ANGGER SETYO WICAKSONO", kelas: "11-E"},
+{username: "13747", password: "12345", name: "ANGGITA KURNIANDARI", kelas: "11-E"},
+{username: "13822", password: "12345", name: "ANINDYA EARLY SYANDANA", kelas: "11-E"},
+{username: "13672", password: "12345", name: "ANNIDA EDELWEISE NAKEYSHA ARIFIA", kelas: "11-E"},
+{username: "13714", password: "12345", name: "ARETA FEBRIA HUWAIDA", kelas: "11-E"},
+{username: "13604", password: "12345", name: "ARVIKA RIEFMA NURMALITA", kelas: "11-E"},
+{username: "13782", password: "12345", name: "AUFA NUR FADILA", kelas: "11-E"},
+{username: "13751", password: "12345", name: "AVISA AZALIA RAHMANINGRUM", kelas: "11-E"},
+{username: "13675", password: "12345", name: "AYU DEWI LESTARI", kelas: "11-E"},
+{username: "13783", password: "12345", name: "AZIFAH MUFASIHIN FATIYAH", kelas: "11-E"},
+{username: "13715", password: "12345", name: "AZZAHRA NUR HABIBILLAH", kelas: "11-E"},
+{username: "13676", password: "12345", name: "CICIT AYU TASYA", kelas: "11-E"},
+{username: "13677", password: "12345", name: "DYAH RATRI ARIYANI", kelas: "11-E"},
+{username: "13789", password: "12345", name: "ELMEIRA ANAS", kelas: "11-E"},
+{username: "13680", password: "12345", name: "FAIRUZ DINIAN ZAKI", kelas: "11-E"},
+{username: "13681", password: "12345", name: "FALISHA YASMIN", kelas: "11-E"},
+{username: "13793", password: "12345", name: "FAUNISA LATIF", kelas: "11-E"},
+{username: "13683", password: "12345", name: "FRANSISKA MAGAMITA", kelas: "11-E"},
+{username: "13726", password: "12345", name: "FUNAEKA AHZA RAHMATU", kelas: "11-E"},
+{username: "13611", password: "12345", name: "GITA ALENA ZHARIIF", kelas: "11-E"},
+{username: "13612", password: "12345", name: "INNESA NATHANIA KUSMANTO", kelas: "11-E"},
+{username: "13690", password: "12345", name: "KEISYA HYACINTHA RAMADANI SALSABILA", kelas: "11-E"},
+{username: "13691", password: "12345", name: "LINTANG AJI PANGESTU", kelas: "11-E"},
+{username: "13693", password: "12345", name: "MANDEGANI LAUDZA'I", kelas: "11-E"},
+{username: "13845", password: "12345", name: "NAJWA AZIZIAH SALIHI", kelas: "11-E"},
+{username: "13621", password: "12345", name: "NAUFAL DZAKY DZUL HANNAN", kelas: "11-E"},
+{username: "13697", password: "12345", name: "NAURA ERLYNA PUTRI", kelas: "11-E"},
+{username: "13805", password: "12345", name: "NAYLA SAFIRA PUTRI", kelas: "11-E"},
+{username: "13699", password: "12345", name: "PUTRI AUDREY KHOIRUNNISA", kelas: "11-E"},
+{username: "13700", password: "12345", name: "QALESYA AIDA SURYOTOMO", kelas: "11-E"},
+{username: "13703", password: "12345", name: "SABRINA AURA CINTA AZZAHRA", kelas: "11-E"},
+{username: "13847", password: "12345", name: "SATRIA GARDHA MEMAYU", kelas: "11-E"},
+{username: "13704", password: "12345", name: "SEPTIANA PUTRI RAHMADANNI", kelas: "11-E"},
+{username: "13811", password: "12345", name: "SHAFIRA ARDIANA PUTRI", kelas: "11-E"},
+{username: "13777", password: "12345", name: "SHEZA VANYA NAZILA ERTANTO", kelas: "11-E"},
+{username: "13631", password: "12345", name: "SYIFA AZZAHRA", kelas: "11-E"},
+{username: "13708", password: "12345", name: "ABRAR RACHMAT DIANSYAH", kelas: "11-F"},
+{username: "13815", password: "12345", name: "ADELIA DWI YUNIKA", kelas: "11-F"},
+{username: "13743", password: "12345", name: "AFIFAH DEWI NAYLA PUTRI", kelas: "11-F"},
+{username: "13600", password: "12345", name: "AKBAR WICAKSONO MUBAKRI", kelas: "11-F"},
+{username: "13819", password: "12345", name: "ALANTAMA AFIF ANTARA", kelas: "11-F"},
+{username: "13821", password: "12345", name: "ALMEIRA AHZA NARESWARI", kelas: "11-F"},
+{username: "13749", password: "12345", name: "ARLIOKTA WASIATUL CHOLIFAH", kelas: "11-F"},
+{username: "13603", password: "12345", name: "ARTHA ZHEZA FEBRIARISTI", kelas: "11-F"},
+{username: "13643", password: "12345", name: "BONIFASIUS NOEL ADVENTO", kelas: "11-F"},
+{username: "13718", password: "12345", name: "DEVINA APVRIZA SUDARSONO", kelas: "11-F"},
+{username: "13758", password: "12345", name: "EFTI ISNAWATI", kelas: "11-F"},
+{username: "13646", password: "12345", name: "ELITA NUR", kelas: "11-F"},
+{username: "13678", password: "12345", name: "ERVINA RIZQY RAHMAWATI", kelas: "11-F"},
+{username: "13831", password: "12345", name: "FARRAS SYIHABUDDIN AL HANNAN", kelas: "11-F"},
+{username: "13761", password: "12345", name: "GHULAM MA'RUF HIDAYAT", kelas: "11-F"},
+{username: "13685", password: "12345", name: "GURUH IDAM GILANG PRADANA", kelas: "11-F"},
+{username: "13835", password: "12345", name: "HAIDIR BINTANG AL FARREL", kelas: "11-F"},
+{username: "13614", password: "12345", name: "JOHAN CIHANA", kelas: "11-F"},
+{username: "13653", password: "12345", name: "KEYSHA RIZKY RAMADHANI", kelas: "11-F"},
+{username: "13762", password: "12345", name: "KHANZA REIHA AQILA ZAHRA", kelas: "11-F"},
+{username: "13841", password: "12345", name: "LUFTHANZA JUSANDO", kelas: "11-F"},
+{username: "13731", password: "12345", name: "MARSHANISWA ABIDAH PRATOMO", kelas: "11-F"},
+{username: "13802", password: "12345", name: "MUHAMAD RIYAN DWI ARIWIBOWO", kelas: "11-F"},
+{username: "13618", password: "12345", name: "MUHAMMAD DZAKI RIFQIANSYAH", kelas: "11-F"},
+{username: "13733", password: "12345", name: "MUHAMMAD ROFIQ", kelas: "11-F"},
+{username: "13695", password: "12345", name: "NAHLA DIAN RENATASARI", kelas: "11-F"},
+{username: "13696", password: "12345", name: "NAOMI NATANIA SETIAWAN", kelas: "11-F"},
+{username: "13773", password: "12345", name: "RADIT NURLATIF ADITYA", kelas: "11-F"},
+{username: "13663", password: "12345", name: "RAISSA ADINDA ELMIRA", kelas: "11-F"},
+{username: "13737", password: "12345", name: "RIDHO BIAS RAMADHAN", kelas: "11-F"},
+{username: "13627", password: "12345", name: "RIFKY DAMARA WIJAYA", kelas: "11-F"},
+{username: "13738", password: "12345", name: "RIFQY SYARIF HUSAIN", kelas: "11-F"},
+{username: "13628", password: "12345", name: "RULIFF WAHYU RAMADHAN", kelas: "11-F"},
+{username: "13629", password: "12345", name: "SHABINA FITRIANA PUTRI EFENDI", kelas: "11-F"},
+{username: "13667", password: "12345", name: "TAUFIK HALIM HENDRIANSYAH", kelas: "11-F"},
+{username: "13670", password: "12345", name: "ZALFA YUDIANNAFISHA RAYYA", kelas: "11-F"},
+{username: "13818", password: "12345", name: "AFINDA ASFA WIDYAWATI", kelas: "11-G"},
+{username: "13820", password: "12345", name: "ALISA KUSUMA WARDANI", kelas: "11-G"},
+{username: "13710", password: "12345", name: "ALTHAFIANA KHUMAYRA ZAHRA", kelas: "11-G"},
+{username: "13637", password: "12345", name: "ANANTHA ATINDRIYA SOESANTO", kelas: "11-G"},
+{username: "13601", password: "12345", name: "ANGELINE DHEANYTA SETIAWAN", kelas: "11-G"},
+{username: "13748", password: "12345", name: "ANNISA DWI SETYANINGSIH", kelas: "11-G"},
+{username: "13781", password: "12345", name: "ATHALLA ZARA WINAR SAPUTRI", kelas: "11-G"},
+{username: "13674", password: "12345", name: "AULIA AZZAHROH NUR SALSABIILA", kelas: "11-G"},
+{username: "13826", password: "12345", name: "AULIA DEVINTA SALSABILA", kelas: "11-G"},
+{username: "13827", password: "12345", name: "BARCKAFII ZIMMERA KIRANA", kelas: "11-G"},
+{username: "13642", password: "12345", name: "BISMA WISNU KAWIRYAN", kelas: "11-G"},
+{username: "13830", password: "12345", name: "DINDA RAMADHANI PUSPITASARI", kelas: "11-G"},
+{username: "13719", password: "12345", name: "DINI MUTIA MAULIDA", kelas: "11-G"},
+{username: "13787", password: "12345", name: "DITA WAHYU RAMADHANI", kelas: "11-G"},
+{username: "13647", password: "12345", name: "EMMANUELLA DELLA ROSA", kelas: "11-G"},
+{username: "13648", password: "12345", name: "ERIN SABELA ARISTAWATI", kelas: "11-G"},
+{username: "13610", password: "12345", name: "FATIMAH MAULIDA HIDAYAH", kelas: "11-G"},
+{username: "13794", password: "12345", name: "FELIZA EKA PUTRI", kelas: "11-G"},
+{username: "13649", password: "12345", name: "FERI AHMAD SETIAWAN", kelas: "11-G"},
+{username: "13727", password: "12345", name: "GHANIA RIFQA SAQIBA", kelas: "11-G"},
+{username: "13687", password: "12345", name: "INDIE AURELLIA AYA REVA", kelas: "11-G"},
+{username: "13689", password: "12345", name: "JOHN SEBASTIAN SUPANGAT", kelas: "11-G"},
+{username: "13837", password: "12345", name: "KEVIN ARBYANZA PUTRA", kelas: "11-G"},
+{username: "13763", password: "12345", name: "KHIESA AYU MAYLANI", kelas: "11-G"},
+{username: "13616", password: "12345", name: "KINARA ANINDYA ATHA", kelas: "11-G"},
+{username: "13799", password: "12345", name: "LAILA RADHIKA BAGJA", kelas: "11-G"},
+{username: "13692", password: "12345", name: "MAIDA NUR RAHMAWATI", kelas: "11-G"},
+{username: "13803", password: "12345", name: "MUHAMMAD ANWAR ISMAIL", kelas: "11-G"},
+{username: "13658", password: "12345", name: "MUTIK KURNIA SALAMAH", kelas: "11-G"},
+{username: "13804", password: "12345", name: "NAILA SEKARSARI HARTANTO", kelas: "11-G"},
+{username: "13772", password: "12345", name: "PUGUH PRABAWA SULISTYA KATAM", kelas: "11-G"},
+{username: "13623", password: "12345", name: "RA'IFAH HARUMI", kelas: "11-G"},
+{username: "13810", password: "12345", name: "RUFAIDA ALFIYANA PUTRI", kelas: "11-G"},
+{username: "13778", password: "12345", name: "SHIDQI TAUFIQURRAHMAN", kelas: "11-G"},
+{username: "13634", password: "12345", name: "TIMOTHEUS RAMA WIJAYA", kelas: "11-G"},
+{username: "13668", password: "12345", name: "WINONA RASIYAH SPERANZA", kelas: "11-G"},
+{username: "13561", password: "12345", name: "ADRIAN ILHAM WIKANTYASA PERDAMAIAN", kelas: "12-A"},
+{username: "13455", password: "12345", name: "AHMAD RAFI' RIYAN IBRAHIM", kelas: "12-A"},
+{username: "13381", password: "12345", name: "AISYAH HAYYU KARTIKA ZAMAN", kelas: "12-A"},
+{username: "13345", password: "12345", name: "ALIFFA PUTRI IYOMI", kelas: "12-A"},
+{username: "13458", password: "12345", name: "ANNISA RAIHANA QOULAN SADIDA", kelas: "12-A"},
+{username: "13565", password: "12345", name: "ARSHAD PRADIPTA", kelas: "12-A"},
+{username: "13348", password: "12345", name: "ARSYADATUL WATSNA AFITSA", kelas: "12-A"},
+{username: "13385", password: "12345", name: "ASYIL SANIAH", kelas: "12-A"},
+{username: "13566", password: "12345", name: "ATHIYA SILFIE NABILA", kelas: "12-A"},
+{username: "13567", password: "12345", name: "ATIQA AMELIA RIZQI", kelas: "12-A"},
+{username: "13422", password: "12345", name: "AYU NAIZA ANDRIAN", kelas: "12-A"},
+{username: "13461", password: "12345", name: "DIVA AYU SILVIA", kelas: "12-A"},
+{username: "13494", password: "12345", name: "ENGGAR FENDI SATRIO", kelas: "12-A"},
+{username: "13463", password: "12345", name: "FATIKAH TIAR RINJANI", kelas: "12-A"},
+{username: "13355", password: "12345", name: "FATIKHASARI HIDAYATI", kelas: "12-A"},
+{username: "13397", password: "12345", name: "FREYA NIRWASITA TAMADYANIST", kelas: "12-A"},
+{username: "13540", password: "12345", name: "GUSFITO RESTU PRATAMA", kelas: "12-A"},
+{username: "13434", password: "12345", name: "HAFIDHAH ROFIAH NURJANNAH", kelas: "12-A"},
+{username: "13359", password: "12345", name: "HANA SINDI ANISAH", kelas: "12-A"},
+{username: "13577", password: "12345", name: "HASAN AUFAR", kelas: "12-A"},
+{username: "13498", password: "12345", name: "HERLINA RAHMA", kelas: "12-A"},
+{username: "13399", password: "12345", name: "INTAN WIDYA PANGESTIKA", kelas: "12-A"},
+{username: "13578", password: "12345", name: "I'ZAZ NAIFAH", kelas: "12-A"},
+{username: "13469", password: "12345", name: "KADHITA ZARRA AL KHANSA", kelas: "12-A"},
+{username: "13471", password: "12345", name: "MUHAMMAD TEGAR WAHYU SAPUTRA", kelas: "12-A"},
+{username: "13547", password: "12345", name: "NABILA FAZA TAZKIA", kelas: "12-A"},
+{username: "13509", password: "12345", name: "NASHWA VICI KURNIAJI", kelas: "12-A"},
+{username: "13510", password: "12345", name: "NASYWAA RADDIN ANTOSINA", kelas: "12-A"},
+{username: "13443", password: "12345", name: "NUR FERIKA INDRIANI", kelas: "12-A"},
+{username: "13512", password: "12345", name: "RAHMALIA PUTRI UTAMI", kelas: "12-A"},
+{username: "13375", password: "12345", name: "RAMADHANI INTAN DAMARJATI", kelas: "12-A"},
+{username: "13587", password: "12345", name: "RISKA WIDYAWATI", kelas: "12-A"},
+{username: "13518", password: "12345", name: "THORIQ SALAMUDDIN", kelas: "12-A"},
+{username: "13521", password: "12345", name: "YUNITA ANDINI PUTRI SAFIRA", kelas: "12-A"},
+{username: "13451", password: "12345", name: "YUSYIFA NAFISAWATI", kelas: "12-A"},
+{username: "13415", password: "12345", name: "ZAHRA RIZKA AYU FEBRINA", kelas: "12-A"},
+{username: "13560", password: "12345", name: "ABIYAN BAYDAR NUGROHO", kelas: "12-B"},
+{username: "13452", password: "12345", name: "ADHAINI NUR MARASARI", kelas: "12-B"},
+{username: "13564", password: "12345", name: "ALYSHA RIZQI RAMADHANI", kelas: "12-B"},
+{username: "13383", password: "12345", name: "AMALIYA MA'RUFAH", kelas: "12-B"},
+{username: "13421", password: "12345", name: "AULIYA ROSA RAHMAWATI", kelas: "12-B"},
+{username: "13459", password: "12345", name: "AYUDYA CAHYA BINTANG SAPUTRI", kelas: "12-B"},
+{username: "13388", password: "12345", name: "AZMI NABIL FATHINAH", kelas: "12-B"},
+{username: "13389", password: "12345", name: "BERNADETHA RATNA WULANDARI PRIHADI", kelas: "12-B"},
+{username: "13572", password: "12345", name: "DAFA ARYANTA PUTRA PRASETYA", kelas: "12-B"},
+{username: "13531", password: "12345", name: "DANISH AMMARA SHIFA ALYANO", kelas: "12-B"},
+{username: "13532", password: "12345", name: "DANISH MUKTAZZAH 'ATIIQAH", kelas: "12-B"},
+{username: "13491", password: "12345", name: "DWI ARIB FADHLUR ROHMAN", kelas: "12-B"},
+{username: "13492", password: "12345", name: "EARLY DWI KUSUMAWATI", kelas: "12-B"},
+{username: "13493", password: "12345", name: "EKA PRIHATIN ROJA NAILUNNAJAH", kelas: "12-B"},
+{username: "13431", password: "12345", name: "FAIZ ARSYAD FAHREZI PANJALU", kelas: "12-B"},
+{username: "13497", password: "12345", name: "FITRI WIDAYANTI", kelas: "12-B"},
+{username: "13464", password: "12345", name: "GADIS PRATISTA", kelas: "12-B"},
+{username: "13357", password: "12345", name: "GENDHIS ANINDITA WIBOWO", kelas: "12-B"},
+{username: "13398", password: "12345", name: "HANIF LUTFI NABILA", kelas: "12-B"},
+{username: "13499", password: "12345", name: "HERMAWAN ADITYA KUSJATMIKA", kelas: "12-B"},
+{username: "13500", password: "12345", name: "IRA MASRUROH", kelas: "12-B"},
+{username: "13579", password: "12345", name: "KEYSHA ALVINA AZZAHRA", kelas: "12-B"},
+{username: "13502", password: "12345", name: "KEYZA ALIFIA", kelas: "12-B"},
+{username: "13437", password: "12345", name: "LATHIFAH ATUTININGTIYAS", kelas: "12-B"},
+{username: "13438", password: "12345", name: "LIVIA TRI LESTARI", kelas: "12-B"},
+{username: "13506", password: "12345", name: "MUHAMMAD RASYID ALFARIZI", kelas: "12-B"},
+{username: "13440", password: "12345", name: "MUHAMMAD ULIN NUHA", kelas: "12-B"},
+{username: "13473", password: "12345", name: "NABILA ALYA MUKHBITA", kelas: "12-B"},
+{username: "13368", password: "12345", name: "NAJMA RAISSA SALEHA", kelas: "12-B"},
+{username: "13369", password: "12345", name: "NATHAN KENZIE RADITHYA", kelas: "12-B"},
+{username: "13370", password: "12345", name: "NAWFAL RUWAYFI HARTANTO", kelas: "12-B"},
+{username: "13477", password: "12345", name: "NUFAISAH PUTRI MEIHASNI", kelas: "12-B"},
+{username: "13372", password: "12345", name: "PUTRI SALMA WAVIAH", kelas: "12-B"},
+{username: "13588", password: "12345", name: "SABILA LUNA SUGIARTO", kelas: "12-B"},
+{username: "13590", password: "12345", name: "SALARAS ATIFAH", kelas: "12-B"},
+{username: "13515", password: "12345", name: "SATRIA ABIYANSYAH", kelas: "12-B"},
+{username: "13454", password: "12345", name: "ADRIAN SUBEKTI", kelas: "12-C"},
+{username: "13457", password: "12345", name: "ALZENA ZAHWA HUSAEN", kelas: "12-C"},
+{username: "13525", password: "12345", name: "APRILIA SULISTYAWATI", kelas: "12-C"},
+{username: "13528", password: "12345", name: "ARKA FABIAN DARMA PUTRA", kelas: "12-C"},
+{username: "13527", password: "12345", name: "ARUM LESTARI", kelas: "12-C"},
+{username: "13418", password: "12345", name: "ASMAN RAMADHANI HAKIM", kelas: "12-C"},
+{username: "13568", password: "12345", name: "AZZAH HAUNAN SABRINA", kelas: "12-C"},
+{username: "13423", password: "12345", name: "AZZAHRA HAYYU KHALISTA", kelas: "12-C"},
+{username: "13424", password: "12345", name: "BENING CAHYA RYENA", kelas: "12-C"},
+{username: "13488", password: "12345", name: "BINTANG NAYOTTAMA", kelas: "12-C"},
+{username: "13350", password: "12345", name: "BINTANG PRAKASA ARIYANTO", kelas: "12-C"},
+{username: "13426", password: "12345", name: "CHOLID IRSYAD", kelas: "12-C"},
+{username: "13571", password: "12345", name: "CINDY RINDIYANI", kelas: "12-C"},
+{username: "13427", password: "12345", name: "DAMAR PANJALU", kelas: "12-C"},
+{username: "13533", password: "12345", name: "DEA ASHILA RAHMA DIYANA", kelas: "12-C"},
+{username: "13490", password: "12345", name: "DEAN AZRIEL PANJAITAN", kelas: "12-C"},
+{username: "13429", password: "12345", name: "DEVIANA FATONAH", kelas: "12-C"},
+{username: "13460", password: "12345", name: "DIMAS ARIF PRIHANTORO", kelas: "12-C"},
+{username: "13354", password: "12345", name: "EMILIA GALUH CEMPAKA", kelas: "12-C"},
+{username: "13462", password: "12345", name: "FADILA DAMAI VESPERE", kelas: "12-C"},
+{username: "13495", password: "12345", name: "FAUZAN ROMADHON", kelas: "12-C"},
+{username: "13356", password: "12345", name: "FIRSTONER AFFAN DAFFA", kelas: "12-C"},
+{username: "13542", password: "12345", name: "KANNYA ELLYTA PUTRI ANGGRAINI", kelas: "12-C"},
+{username: "13436", password: "12345", name: "KEISHA NUR AZIZAH", kelas: "12-C"},
+{username: "13403", password: "12345", name: "KHOIRUNISA UMAYA", kelas: "12-C"},
+{username: "13362", password: "12345", name: "LUCKY ACHMAD PRASETYA", kelas: "12-C"},
+{username: "13546", password: "12345", name: "MUHAMMAD FARIS HUSAEN", kelas: "12-C"},
+{username: "13479", password: "12345", name: "PUTRI RAHMA SARI", kelas: "12-C"},
+{username: "13553", password: "12345", name: "RASYA KHATAMI MOEDJIONO", kelas: "12-C"},
+{username: "13554", password: "12345", name: "RINGGA JATI WICAKSONO", kelas: "12-C"},
+{username: "13410", password: "12345", name: "RISSA KHORININGTYAS", kelas: "12-C"},
+{username: "13482", password: "12345", name: "SAFA NAZHIFATUZ ZULFA", kelas: "12-C"},
+{username: "13483", password: "12345", name: "SALMA INTAN NUR'AINI", kelas: "12-C"},
+{username: "13555", password: "12345", name: "SEKAR DAMAYANTI", kelas: "12-C"},
+{username: "13592", password: "12345", name: "SHAFA MUTHIA YUMNA", kelas: "12-C"},
+{username: "13559", password: "12345", name: "ZHARIFAH NUR MAHMUDAH", kelas: "12-C"},
+{username: "13344", password: "12345", name: "ADIANSYAH ARIF HIDAYATULLAH", kelas: "12-D"},
+{username: "13380", password: "12345", name: "ADINA ZAHRA SHAFIA", kelas: "12-D"},
+{username: "13417", password: "12345", name: "ADYA FENTHI GENTA RAMADHANI", kelas: "12-D"},
+{username: "13387", password: "12345", name: "AURIEL DIANDRA NABILA", kelas: "12-D"},
+{username: "13390", password: "12345", name: "DANENDRA AUFA RAFIF", kelas: "12-D"},
+{username: "13391", password: "12345", name: "DEIDAN ARYOSETO SUBAGYO", kelas: "12-D"},
+{username: "13534", password: "12345", name: "DEWI MEISA WULANDARI", kelas: "12-D"},
+{username: "13430", password: "12345", name: "ERLANGGA PUTRA BUDI SETIAWAN", kelas: "12-D"},
+{username: "13575", password: "12345", name: "EZAR WIFA FAIRUZZAKI", kelas: "12-D"},
+{username: "13393", password: "12345", name: "FADHIL AHMAD SYABANA", kelas: "12-D"},
+{username: "13538", password: "12345", name: "FATHANDIKA NUR IHSAN", kelas: "12-D"},
+{username: "13496", password: "12345", name: "FIRA YOSINTA ADI", kelas: "12-D"},
+{username: "13433", password: "12345", name: "GANIS ALYA CAHYANINGTYAS", kelas: "12-D"},
+{username: "13576", password: "12345", name: "HANNAN NAUFAL NASRUL HAQ", kelas: "12-D"},
+{username: "13400", password: "12345", name: "IRENE BUDI KURNIAWATI", kelas: "12-D"},
+{username: "13468", password: "12345", name: "ISNA KHOIRUN NISA", kelas: "12-D"},
+{username: "13360", password: "12345", name: "JESA ALIYA DEVITRI", kelas: "12-D"},
+{username: "13361", password: "12345", name: "KEVIN RAYSHA PERMANA", kelas: "12-D"},
+{username: "13580", password: "12345", name: "KIRANI FATINA ZAHRASTUTI", kelas: "12-D"},
+{username: "13439", password: "12345", name: "MADA MALIKA ANANDA", kelas: "12-D"},
+{username: "13505", password: "12345", name: "MAULIDA UMMY HANI' ROSYADA", kelas: "12-D"},
+{username: "13545", password: "12345", name: "MAYA NATARINA NURMALA", kelas: "12-D"},
+{username: "13472", password: "12345", name: "MUTIARA ANASTASIA SETIAWATI", kelas: "12-D"},
+{username: "13474", password: "12345", name: "NAJWA SALSABILA NOVISAPUTRI", kelas: "12-D"},
+{username: "13549", password: "12345", name: "NAZALIA ZAUHAIR NIANDITA", kelas: "12-D"},
+{username: "13441", password: "12345", name: "NINDITA AGNIA KHAIRUNNISA", kelas: "12-D"},
+{username: "13550", password: "12345", name: "NISRINA NUR HADIYANTO", kelas: "12-D"},
+{username: "13511", password: "12345", name: "RAHADYAN PUNJUNG JATMIKO", kelas: "12-D"},
+{username: "13513", password: "12345", name: "RAKHA FAIRUZ SYAFA", kelas: "12-D"},
+{username: "13447", password: "12345", name: "RAMYA WINDRIYA SASANTI", kelas: "12-D"},
+{username: "13411", password: "12345", name: "RYAN ANDIKA JANUAR", kelas: "12-D"},
+{username: "13485", password: "12345", name: "SASKIA AULIA SAFITRI", kelas: "12-D"},
+{username: "13486", password: "12345", name: "SHIFA ULINUHA DZAKIYYA", kelas: "12-D"},
+{username: "13449", password: "12345", name: "SYAHRU RADITYA NURFAHMI", kelas: "12-D"},
+{username: "13595", password: "12345", name: "VIENETTA RAFEYFA ASYLA EKA PUTRI", kelas: "12-D"},
+{username: "13557", password: "12345", name: "YOGI FERRY PRATAMA", kelas: "12-D"},
+{username: "13416", password: "12345", name: "ADHYAKSA IQBAL AZZAHIR YOKA", kelas: "12-E"},
+{username: "13382", password: "12345", name: "ALIKA FLORIAN RAMADHIANI", kelas: "12-E"},
+{username: "13526", password: "12345", name: "AQILA ZAHRA AMIRA SUTANTO", kelas: "12-E"},
+{username: "13347", password: "12345", name: "ARCELIA CALISTA", kelas: "12-E"},
+{username: "13349", password: "12345", name: "AUDIA MECCA HENDYANA", kelas: "12-E"},
+{username: "13420", password: "12345", name: "AUFA HAFIY NURAIRA AZKA", kelas: "12-E"},
+{username: "13386", password: "12345", name: "AULIYA INTI RAHMA PUTRI", kelas: "12-E"},
+{username: "13529", password: "12345", name: "AURELIA CAESSA KALILA PUTRI", kelas: "12-E"},
+{username: "13425", password: "12345", name: "CHESYA ATHA NAFISA", kelas: "12-E"},
+{username: "13573", password: "12345", name: "DAFA HERMAWAN NUR MAJID", kelas: "12-E"},
+{username: "13428", password: "12345", name: "DESIRA BILQIS NAKISHA", kelas: "12-E"},
+{username: "13394", password: "12345", name: "FAHMI EKA YULIYANTI", kelas: "12-E"},
+{username: "13395", password: "12345", name: "FAJRIANZA AZIZ WIBAWA", kelas: "12-E"},
+{username: "13396", password: "12345", name: "FARIZQIA GHATHFANI", kelas: "12-E"},
+{username: "13467", password: "12345", name: "IHDA AL-HUSNAYAINI", kelas: "12-E"},
+{username: "13401", password: "12345", name: "IRZAQI DWI MAULANA", kelas: "12-E"},
+{username: "13501", password: "12345", name: "KAFA FI SABILILLAH", kelas: "12-E"},
+{username: "13402", password: "12345", name: "KHALIFI MAULIDIA", kelas: "12-E"},
+{username: "13544", password: "12345", name: "KHOIRIN NISSA IDA KHASANAH", kelas: "12-E"},
+{username: "13406", password: "12345", name: "M. IRSYAD FAQIH", kelas: "12-E"},
+{username: "13407", password: "12345", name: "MARIA KARTIKA DIAN UTAMI", kelas: "12-E"},
+{username: "13364", password: "12345", name: "MIKHAILA VEDA SARASWATI", kelas: "12-E"},
+{username: "13367", password: "12345", name: "MUHAMMAD RAFFI ARZANY", kelas: "12-E"},
+{username: "13584", password: "12345", name: "NABILA SALSABILA", kelas: "12-E"},
+{username: "13508", password: "12345", name: "NADIA ANDRIYANI", kelas: "12-E"},
+{username: "13475", password: "12345", name: "NAMIRA TSABITA NISRINA", kelas: "12-E"},
+{username: "13408", password: "12345", name: "NISRINA MAIZA GUSNAINI", kelas: "12-E"},
+{username: "13446", password: "12345", name: "RAFAEL HAIDAR RONALDO", kelas: "12-E"},
+{username: "13409", password: "12345", name: "RIDHO GATA WIJAYA", kelas: "12-E"},
+{username: "13377", password: "12345", name: "ROMIZ KHALDUN WIDYANTO", kelas: "12-E"},
+{username: "13412", password: "12345", name: "SAFIRA MUMTAZ APSARINI", kelas: "12-E"},
+{username: "13414", password: "12345", name: "SHAVIN ADINDRANI PUTRI", kelas: "12-E"},
+{username: "13487", password: "12345", name: "SYAFIRA", kelas: "12-E"},
+{username: "13450", password: "12345", name: "SYARIFUDDIN MUHAMMAD EL GHIFARY", kelas: "12-E"},
+{username: "13378", password: "12345", name: "TERESA AVILA KRISTIANA WIDIASTUTI", kelas: "12-E"},
+{username: "13520", password: "12345", name: "VARYSKA ADYATMA WARASTRI", kelas: "12-E"},
+{username: "13456", password: "12345", name: "ALEXANDER SONY KURNIAWAN", kelas: "12-F"},
+{username: "13563", password: "12345", name: "ALIFA ANINDITA RAHMADANI", kelas: "12-F"},
+{username: "13384", password: "12345", name: "ANANDITO WAHYU WICAKSONO", kelas: "12-F"},
+{username: "13530", password: "12345", name: "AZWA RIFNAND EFENDI", kelas: "12-F"},
+{username: "13353", password: "12345", name: "DWI FEBRIYANI", kelas: "12-F"},
+{username: "13535", password: "12345", name: "DZAFIF NAUFAL ISNUARTA", kelas: "12-F"},
+{username: "13536", password: "12345", name: "EMMANUELLA CHRISTANIA PUTRI", kelas: "12-F"},
+{username: "13537", password: "12345", name: "FADJRINA SALSABILA KHALISHAH PUTRI", kelas: "12-F"},
+{username: "13432", password: "12345", name: "FIRJAL FARAHNISA BELGIN", kelas: "12-F"},
+{username: "13465", password: "12345", name: "GRACELLA LOLITA PRASETYA PUTRI", kelas: "12-F"},
+{username: "13358", password: "12345", name: "GWEN ELENA MAKAYLA", kelas: "12-F"},
+{username: "13466", password: "12345", name: "HALIMAH LU'LU'UNNURANI", kelas: "12-F"},
+{username: "13541", password: "12345", name: "HIMAWAN ARIA YUDA", kelas: "12-F"},
+{username: "13435", password: "12345", name: "IRMAWATI DWI VALENTIN", kelas: "12-F"},
+{username: "13543", password: "12345", name: "KEYLA DWI OCTAVIA", kelas: "12-F"},
+{username: "13470", password: "12345", name: "KINANTI NURINTYAS", kelas: "12-F"},
+{username: "13581", password: "12345", name: "LUTFI FARHANA", kelas: "12-F"},
+{username: "13582", password: "12345", name: "MUTIA KIREINA RAHARJO", kelas: "12-F"},
+{username: "13583", password: "12345", name: "NABILA AULIA RAHMA", kelas: "12-F"},
+{username: "13507", password: "12345", name: "NABILA QURATA AULIA PUTRI R", kelas: "12-F"},
+{username: "13548", password: "12345", name: "NAYUNDA RASTYSIA YUSAPUTRI", kelas: "12-F"},
+{username: "13551", password: "12345", name: "NOVARA AKHMALIA NAFIATUN", kelas: "12-F"},
+{username: "13371", password: "12345", name: "NUR LAILA SYAHIDAH", kelas: "12-F"},
+{username: "13445", password: "12345", name: "OLIVIA FEBRIANI", kelas: "12-F"},
+{username: "13478", password: "12345", name: "PHILIP RUSDIYONO", kelas: "12-F"},
+{username: "13480", password: "12345", name: "RADIT RAFI'I", kelas: "12-F"},
+{username: "13373", password: "12345", name: "RAFAEL KRISTANTO", kelas: "12-F"},
+{username: "13374", password: "12345", name: "RAHMA SYAKIRAH", kelas: "12-F"},
+{username: "13448", password: "12345", name: "RISKA LILI PUTRI UTAMI", kelas: "12-F"},
+{username: "13589", password: "12345", name: "SABRINA ANGGANI RARAS", kelas: "12-F"},
+{username: "13514", password: "12345", name: "SALWA AL HAYA", kelas: "12-F"},
+{username: "13556", password: "12345", name: "SEVERINA LAKSITA WIDYA NASTITI", kelas: "12-F"},
+{username: "13593", password: "12345", name: "SHOFI AMALIA", kelas: "12-F"},
+{username: "13517", password: "12345", name: "SYAHIDA SALAMAH", kelas: "12-F"},
+{username: "13523", password: "12345", name: "ZAHWA DEVI RAIHANAH", kelas: "12-F"},
+{username: "13558", password: "12345", name: "ZETHA AURELIA", kelas: "12-F"},
+{username: "13453", password: "12345", name: "ADITYA RAGIL YULIANTO", kelas: "12-G"},
+{username: "13524", password: "12345", name: "AFIFAH NUR SYAHRANI", kelas: "12-G"},
+{username: "13562", password: "12345", name: "ALFI MAHSUNAH", kelas: "12-G"},
+{username: "13346", password: "12345", name: "ANGGITA FITRIANA RAHMAWATI", kelas: "12-G"},
+{username: "13597", password: "12345", name: "ARINI TRI SALSABILA LESTARI", kelas: "12-G"},
+{username: "13419", password: "12345", name: "ATTALLAH NURRISTA NUGRAHA", kelas: "12-G"},
+{username: "13569", password: "12345", name: "BISMA NAUFA AMRU", kelas: "12-G"},
+{username: "13570", password: "12345", name: "CHARENT BILQIES ANDINI HAPSARI", kelas: "12-G"},
+{username: "13489", password: "12345", name: "DANIAL NOURI MUSYAFFA", kelas: "12-G"},
+{username: "13351", password: "12345", name: "DESTA AULIA RAHMAWATI", kelas: "12-G"},
+{username: "13352", password: "12345", name: "DESTIANA AISYAH AZZAHRA", kelas: "12-G"},
+{username: "13392", password: "12345", name: "DYAN APRILLIANINGSIH", kelas: "12-G"},
+{username: "13574", password: "12345", name: "ENDA TRI ARWAN MAULANA", kelas: "12-G"},
+{username: "13539", password: "12345", name: "GLEDIS TUSELIA", kelas: "12-G"},
+{username: "13404", password: "12345", name: "LEANDRA KURNIAWAN", kelas: "12-G"},
+{username: "13503", password: "12345", name: "LARETA SABRINA NATHANIA", kelas: "12-G"},
+{username: "13405", password: "12345", name: "LINTANG CAHYANINGRUM", kelas: "12-G"},
+{username: "13363", password: "12345", name: "LULU AFIFAH", kelas: "12-G"},
+{username: "13504", password: "12345", name: "MALIKA CINTA MAHARWIYATI", kelas: "12-G"},
+{username: "13365", password: "12345", name: "MUHAMMAD ABDUL AZIZ", kelas: "12-G"},
+{username: "13366", password: "12345", name: "MUHAMMAD IQBAL HARYO PURNOMO", kelas: "12-G"},
+{username: "13476", password: "12345", name: "NASYWA YANU VARISHA", kelas: "12-G"},
+{username: "13442", password: "12345", name: "NOVA PUTRI WULANDARI", kelas: "12-G"},
+{username: "13444", password: "12345", name: "OKTA FITRIANA", kelas: "12-G"},
+{username: "13552", password: "12345", name: "RAHMAH AULYA RAMADHANI", kelas: "12-G"},
+{username: "13585", password: "12345", name: "RAHYANISA PRAMESTHI RAHARJO", kelas: "12-G"},
+{username: "13376", password: "12345", name: "RAYA RAHMA ANINDYA R", kelas: "12-G"},
+{username: "13481", password: "12345", name: "RIDHO PUTRA KUNJANA", kelas: "12-G"},
+{username: "13586", password: "12345", name: "RISA AYU RAHMAWATI", kelas: "12-G"},
+{username: "13591", password: "12345", name: "SALSA HARNIANTY", kelas: "12-G"},
+{username: "13413", password: "12345", name: "SALWA EMILI ANNABILA", kelas: "12-G"},
+{username: "13484", password: "12345", name: "SARRAH FIKRI KHAIRANI", kelas: "12-G"},
+{username: "13516", password: "12345", name: "SHELVI ARIFINA RAMADHANI", kelas: "12-G"},
+{username: "13594", password: "12345", name: "UMI SALAMAH FARDZAN", kelas: "12-G"},
+{username: "13379", password: "12345", name: "VANIA CITRA ELYSIA", kelas: "12-G"},
+{username: "13522", password: "12345", name: "ZAHRA CHOIRUNNISA", kelas: "12-G"},
+{ username: 'admin', password: 'admin', name: 'Panitia Pemilos', kelas: 'Admin', role: 'admin' }
+        ];
+
+        const CANDIDATES = [
+            { 
+                id: 1, 
+                name: 'Tiara Andini', 
+                // Ganti tulisan 'foto-kandidat-1.jpg' dengan nama file foto Anda yang ada di dalam folder yang sama
+                photo: '5. Dea.jpg',
+                visi: 'Mewujudkan OSIS yang aktif, inovatif, dan berkarakter.'
+            },
+            { 
+                id: 2, 
+                name: 'Bagas Prakoso', 
+                // Ganti dengan nama file foto kandidat 2
+                photo: '6. Diandra.jpg',
+                visi: 'Menjadikan lingkungan sekolah bersih, asri, dan suportif.'
+            },
+            { 
+                id: 3, 
+                name: 'Citra Lestari', 
+                // Ganti dengan nama file foto kandidat 3
+                photo: '2. Adyasta.jpg',
+                visi: 'Membangun kreativitas siswa melalui program ekstrakurikuler unggulan.'
+            }
+        ];
+
+        // --- GLOBAL VARIABLES ---
+        let currentUser = null;
+        
+        // PASTIKAN ANDA MENGGANTI URL DI BAWAH INI DENGAN URL DEPLOYMENT BARU ANDA
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-nWZMJKyKqmY8JkNj0mbWtJIBuoI_E4lh_pH-KpLqZuyzv9xO_p9uSv5zhC_q1DP0/exec'; 
+
+        // --- DOM ELEMENTS ---
+        const viewLogin = document.getElementById('view-login');
+        const viewVoting = document.getElementById('view-voting');
+        const viewAdmin = document.getElementById('view-admin');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const loginErrorText = document.getElementById('login-error-text');
+        const timeWarning = document.getElementById('time-warning');
+        const loginHeader = document.getElementById('login-header');
+        const loginSubtitle = document.getElementById('login-subtitle');
+
+        // --- JAM DIGITAL & CEK WAKTU ---
+        function updateClock() {
+            const now = new Date();
+            
+            // Format Waktu
+            document.getElementById('clock-time').textContent = now.toLocaleTimeString('id-ID', {
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+            
+            // Format Tanggal
+            document.getElementById('clock-date').textContent = now.toLocaleDateString('id-ID', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+
+            // Cek Waktu Voting (08:00 - 14:00)
+            const hour = now.getHours();
+            const isVotingOpen = hour >= 0 && hour < 23;
+
+            if (!isVotingOpen) {
+                loginHeader.classList.remove('bg-orange-600');
+                loginHeader.classList.add('bg-red-600');
+                loginSubtitle.textContent = 'Sesi Pemilihan Sedang Ditutup';
+                timeWarning.classList.remove('hidden');
+            } else {
+                loginHeader.classList.remove('bg-red-600');
+                loginHeader.classList.add('bg-orange-600');
+                loginSubtitle.textContent = 'Silakan masuk untuk memberikan suara Anda';
+                timeWarning.classList.add('hidden');
+            }
+            return isVotingOpen;
+        }
+        setInterval(updateClock, 1000);
+        updateClock(); // Panggil pertama kali
+
+        // --- RENDER KANDIDAT ---
+        function renderCandidates() {
+            const container = document.getElementById('candidates-container');
+            container.innerHTML = ''; // Bersihkan kontainer
+            
+            CANDIDATES.forEach(kandidat => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100 group cursor-pointer flex flex-col";
+                card.onclick = () => handleVote(kandidat.id);
+                
+                card.innerHTML = `
+                    <div class="relative">
+                        <div class="absolute top-0 left-0 bg-orange-600 text-white font-black text-2xl w-12 h-12 flex items-center justify-center rounded-br-2xl z-10">
+                            ${kandidat.id}
+                        </div>
+                        <img src="${kandidat.photo}" alt="Foto ${kandidat.name}" class="w-full h-72 object-contain bg-gray-50 object-center group-hover:scale-105 transition-transform duration-500" />
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                            <div class="bg-white text-orange-600 font-bold py-2 px-6 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 shadow-lg">
+                                KLIK UNTUK MEMILIH
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 text-center flex-grow flex flex-col">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${kandidat.name}</h3>
+                        <div class="w-16 h-1 bg-orange-500 mx-auto mb-4 rounded-full"></div>
+                        <p class="text-gray-600 text-sm flex-grow italic">&quot;${kandidat.visi}&quot;</p>
+                        <button class="mt-6 w-full bg-gray-100 group-hover:bg-orange-600 group-hover:text-white text-gray-700 font-bold py-3 px-4 rounded-xl transition-colors duration-300">
+                            PILIH KANDIDAT ${kandidat.id}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        renderCandidates();
+
+        // --- RENDER ADMIN TABLE ---
+        function loadAdminData() {
+            const voteData = JSON.parse(localStorage.getItem('pemilos_votes') || '[]');
+            const tbody = document.getElementById('admin-table-body');
+            document.getElementById('total-votes').textContent = voteData.length;
+            tbody.innerHTML = '';
+
+            if (voteData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400">Belum ada data pemilihan yang masuk.</td></tr>`;
+                return;
+            }
+
+            voteData.forEach(vote => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-gray-50 hover:bg-gray-50";
+                tr.innerHTML = `
+                    <td class="p-4 text-sm text-gray-600">${vote.waktu}</td>
+                    <td class="p-4 font-medium text-gray-800">${vote.nama}</td>
+                    <td class="p-4 text-sm text-gray-600">${vote.kelas}</td>
+                    <td class="p-4 font-medium text-orange-700">${vote.kandidat}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- EVENT HANDLERS ---
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            loginError.classList.add('hidden');
+            
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+            const user = MOCK_USERS.find(u => u.username === usernameInput && u.password === passwordInput);
+
+            if (user) {
+                // Admin Akses
+                if (user.role === 'admin') {
+                    currentUser = user;
+                    viewLogin.classList.add('hidden');
+                    viewAdmin.classList.remove('hidden');
+                    loadAdminData();
+                    loginForm.reset();
+                    return;
+                }
+
+                // Cek Rentang Waktu (08.00 - 14.00)
+                const isVotingOpen = updateClock();
+                if (!isVotingOpen) {
+                    showError('Akses Ditolak: Aplikasi hanya dapat digunakan pada rentang pukul 08:00 - 14:00.');
+                    return;
+                }
+
+                // Cek Sudah Memilih
+                const votedUsers = JSON.parse(localStorage.getItem('pemilos_voted_users') || '[]');
+                if (votedUsers.includes(user.username)) {
+                    showError('Akses Ditolak: Anda terindikasi sudah menggunakan hak suara. Pemilihan hanya 1 kali.');
+                    return;
+                }
+
+                // Login Berhasil
+                currentUser = user;
+                loginForm.reset();
+                
+                // Isi data UI Modal & Halaman Voting
+                document.getElementById('modal-voter-name').textContent = currentUser.name;
+                document.getElementById('modal-voter-class').textContent = currentUser.kelas;
+                document.getElementById('voter-name').textContent = currentUser.name;
+                document.getElementById('voter-class').textContent = currentUser.kelas;
+
+                // Tampilkan Modal Login Sukses
+                const modalLogin = document.getElementById('modal-login');
+                modalLogin.classList.remove('hidden');
+
+                // Hilangkan modal & masuk ke halaman voting setelah 3 detik
+                setTimeout(() => {
+                    modalLogin.classList.add('hidden');
+                    viewLogin.classList.add('hidden');
+                    viewVoting.classList.remove('hidden');
+                }, 3000);
+
+            } else {
+                showError('Username atau password salah!');
+            }
+        });
+
+        function showError(msg) {
+            loginErrorText.textContent = msg;
+            loginError.classList.remove('hidden');
+        }
+
+        function handleVote(candidateId) {
+            if (!currentUser) return;
+
+            const candidate = CANDIDATES.find(c => c.id === candidateId);
+            const now = new Date();
+            const newVote = {
+                waktu: now.toLocaleTimeString('id-ID'),
+                nama: currentUser.name,
+                kelas: currentUser.kelas,
+                kandidat: candidate.name
+            };
+
+            // 1. Integrasi API Google Sheets
+            if (GOOGLE_SCRIPT_URL !== 'URL_WEB_APP_ANDA_DISINI') {
+                fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Mencegah pemblokiran origin
+                    // Mengubah tipe pengiriman data menjadi text/plain untuk menghindari pemblokiran preflight CORS
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(newVote)
+                }).catch(err => console.error('Gagal mengirim ke spreadsheet:', err));
+            }
+
+            // 2. Simpan ke LocalStorage untuk Dashboard Admin
+            const existingVotes = JSON.parse(localStorage.getItem('pemilos_votes') || '[]');
+            localStorage.setItem('pemilos_votes', JSON.stringify([...existingVotes, newVote]));
+
+            // 3. Catat User Sudah Memilih
+            const votedUsers = JSON.parse(localStorage.getItem('pemilos_voted_users') || '[]');
+            localStorage.setItem('pemilos_voted_users', JSON.stringify([...votedUsers, currentUser.username]));
+
+            // 4. Tampilkan Notifikasi Sukses Memilih
+            const modalVote = document.getElementById('modal-vote');
+            const progressBar = document.getElementById('progress-bar');
+            
+            modalVote.classList.remove('hidden');
+            // Reset dan mulai animasi loading bar
+            progressBar.classList.remove('progress-bar-animate');
+            void progressBar.offsetWidth; // trigger reflow
+            progressBar.classList.add('progress-bar-animate');
+
+            // 5. Auto Logout dan kembali ke awal
+            setTimeout(() => {
+                modalVote.classList.add('hidden');
+                handleLogout();
+            }, 3000);
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            viewVoting.classList.add('hidden');
+            viewAdmin.classList.add('hidden');
+            viewLogin.classList.remove('hidden');
+        }
+
+        function resetData() {
+            if (confirm('Hapus semua data pemilihan untuk pengujian ulang?')) {
+                localStorage.removeItem('pemilos_votes');
+                localStorage.removeItem('pemilos_voted_users');
+                loadAdminData();
+            }
+        }
+    </script>
+</body>
+</html>
